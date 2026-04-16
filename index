@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | Under Development</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --bg-dark: #0f172a;
+            --text-light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 40%);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 3rem 2rem;
+            max-width: 550px;
+            width: 100%;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            padding: 8px 18px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: inline-block;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            font-weight: 800;
+            background: linear-gradient(to bottom right, #ffffff 30%, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-group:focus-within {
+            border-color: var(--primary-color);
+            background: rgba(15, 23, 42, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="email"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            padding: 12px 16px;
+            font-size: 1rem;
+            min-width: 0; /* Prevents overflow on small screens */
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-msg {
+            display: none;
+            margin-top: 1rem;
+            color: #4ade80;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .form-group {
+                flex-direction: column;
+                background: transparent;
+                border: none;
+                padding: 0;
+            }
+            input[type="email"] {
+                background: rgba(15, 23, 42, 0.6);
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 10px;
+            }
+            button {
+                width: 100%;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="badge">Coming Soon</div>
+        <h1>Under Development</h1>
+        <p>We're building something amazing. Subscribe to be the first to know when we launch!</p>
+
+        <form id="notifyForm">
+            <div class="form-group">
+                <input type="email" id="emailInput" placeholder="Enter your email" required>
+                <button type="submit" id="submitBtn">Notify Me</button>
+            </div>
+        </form>
+        <div id="message" class="success-msg">✨ You're on the list! Talk soon.</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ==========================================================
+        // PASTE YOUR FIREBASE CONFIG OBJECT BELOW
+        // ==========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBt02_3SI0PpwJL_MfPdWcoHsgxgH9nmD4",
+  authDomain: "hexatest-project.firebaseapp.com",
+  projectId: "hexatest-project",
+  storageBucket: "hexatest-project.firebasestorage.app",
+  messagingSenderId: "987836280675",
+  appId: "1:987836280675:web:6d0ab3ea7e817cd967ad56",
+  measurementId: "G-78HHD9DPPW"
+};
+        // ==========================================================
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('notifyForm');
+        const message = document.getElementById('message');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const emailValue = document.getElementById('emailInput').value;
+
+            btn.innerText = "Joining...";
+            btn.disabled = true;
+
+            try {
+                // This will create a collection called 'subscribers' in your Firestore
+                await addDoc(collection(db, "subscribers"), {
+                    email: emailValue,
+                    subscribedAt: serverTimestamp()
+                });
+
+                // Show success UI
+                form.style.display = 'none';
+                message.style.display = 'block';
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("Submission failed. Check your Firebase Project settings/rules.");
+                btn.innerText = "Notify Me";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
